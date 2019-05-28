@@ -52,7 +52,7 @@ use sass_rs::{compile_file, Options};
 
 use category::Category;
 
-use i18n::{I18NHelper, SupportedLocale, TeamHelper};
+use i18n::{I18NHelper, SupportedLocale, TeamHelper, LOCALES};
 
 #[derive(Serialize)]
 struct Context<T: ::serde::Serialize> {
@@ -257,6 +257,18 @@ fn compile_sass(filename: &str) {
         .expect(&format!("couldn't write css file: {}", &css_file));
 }
 
+fn compile_script() {
+    let mut js = File::open("./src/scripts/common.js").expect("common.js not found");
+    let mut contents = String::new();
+    js.read_to_string(&mut contents)
+        .expect("common.js could not be read");
+
+    let new = contents.replace("languages_here", &format!("{:?}", *LOCALES));
+    let mut file = File::create("./static/scripts/common.js").expect("couldn't make common.js");
+    file.write_all(&new.into_bytes())
+        .expect("couldn't write to common.js");
+}
+
 fn concat_vendor_css(files: Vec<&str>) {
     let mut concatted = String::new();
     for filestem in files {
@@ -409,6 +421,7 @@ fn main() {
     compile_sass("app");
     compile_sass("fonts");
     concat_vendor_css(vec!["skeleton", "tachyons"]);
+    compile_script();
 
     let templating = Template::custom(|engine| {
         engine

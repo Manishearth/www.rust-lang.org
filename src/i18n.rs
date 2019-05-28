@@ -22,7 +22,7 @@ lazy_static! {
         read_from_file("./locales/core.ftl").expect("cannot find core.ftl");
     static ref RESOURCES: HashMap<String, Vec<FluentResource>> = build_resources();
     static ref BUNDLES: HashMap<String, FluentBundle<'static>> = build_bundles();
-    static ref LOCALES: Vec<&'static str> = RESOURCES.iter().map(|(l, _)| &**l).collect();
+    pub static ref LOCALES: Vec<&'static str> = RESOURCES.iter().map(|(l, _)| &**l).collect();
     static ref FALLBACKS: HashMap<String, Vec<String>> = build_fallbacks();
 }
 
